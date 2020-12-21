@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "policyName": "CreateorUpdateNSGRule",
+    "policyDisplayName": "Ensure that Activity Log Alert exists for Create or Update Network Security Group Rule",
+    "policyDescription": "Ensure that Activity Log Alert exists for Create or Update Network Security Group Rule",
+    "policyDefinitionID": "[concat('/providers/Microsoft.Management/managementGroups/HumanaTestMG', '/providers/', 'Microsoft.Authorization/policyDefinitions/', variables('policyName'))]"
+  },
+ "resources": [
+    {
+      "name": "[variables('policyName')]",
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2019-09-01",
+      "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "displayName": "[variables('policyDisplayName')]",
+        "description": "[variables('policyDescription')]",
+        "metadata": {
+            "version": "1.0.0",
+            "category": "Monitoring"
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "auditIfNotExists",
+                "details": {
+                    "type": "Microsoft.Insights/ActivityLogAlerts",
+                    "existenceScope": "subscription",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
+                                            "notEquals": "category"
+                                        }
+                                    },
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
+                                            "notEquals": "Administrative"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
+                                            "notEquals": "operationName"
+                                        }
+                                    },
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
+                                            "notEquals": "Microsoft.Network/networkSecurityGroups/securityRules/write"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        }
+      },
+ {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "name": "[variables('policyName')]",
+      "apiVersion": "2018-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Authorization/policyDefinitions', variables('policyName'))]"
+      ],
+      "properties": {
+        "scope": "/providers/Microsoft.Management/managementGroups/HumanaTestMG",
+        "policyDefinitionId": "[variables('policyDefinitionID')]"
+      }
+    }
+  ]
+}
