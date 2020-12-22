@@ -1,6 +1,18 @@
 {
 	"name": "pipeline1",
 	"properties": {
+		"parameters": {
+			"test": {
+				"type": "string",
+				"defaultValue": "fds"
+			}
+		},
+		"variables": {
+			"teste": {
+				"type": "String",
+				"defaultValue": "fsdf"
+			}
+		},
 		"annotations": []
 	}
 }
