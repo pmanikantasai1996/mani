@@ -1,0 +1,290 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name"
+		},
+		"AzureBlobStorage1": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1_copy1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "Policy testing purpose//"
+							},
+							{
+								"name": "Destination",
+								"value": "Policy testing purpose//"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitOnCompletion": true
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							},
+							"timeout": "7.00:00:00",
+							"sleep": 10
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Json1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureBlobStorage1')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": {
+							"value": "Policy testing purpose",
+							"type": "Expression"
+						}
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"$schema": {
+							"type": "string"
+						},
+						"contentVersion": {
+							"type": "string"
+						},
+						"variables": {
+							"type": "object",
+							"properties": {
+								"policyName": {
+									"type": "string"
+								},
+								"policyDisplayName": {
+									"type": "string"
+								},
+								"policyDescription": {
+									"type": "string"
+								},
+								"policyDefinitionID": {
+									"type": "string"
+								}
+							}
+						},
+						"resources": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"apiVersion": {
+										"type": "string"
+									},
+									"properties": {
+										"type": "object",
+										"properties": {
+											"policyType": {
+												"type": "string"
+											},
+											"mode": {
+												"type": "string"
+											},
+											"displayName": {
+												"type": "string"
+											},
+											"description": {
+												"type": "string"
+											},
+											"metadata": {
+												"type": "object",
+												"properties": {
+													"version": {
+														"type": "string"
+													},
+													"category": {
+														"type": "string"
+													}
+												}
+											},
+											"policyRule": {
+												"type": "object",
+												"properties": {
+													"if": {
+														"type": "object",
+														"properties": {
+															"allOf": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"field": {
+																			"type": "string"
+																		},
+																		"equals": {
+																			"type": "string"
+																		}
+																	}
+																}
+															}
+														}
+													},
+													"then": {
+														"type": "object",
+														"properties": {
+															"effect": {
+																"type": "string"
+															},
+															"details": {
+																"type": "object",
+																"properties": {
+																	"type": {
+																		"type": "string"
+																	},
+																	"existenceScope": {
+																		"type": "string"
+																	},
+																	"existenceCondition": {
+																		"type": "object",
+																		"properties": {
+																			"allOf": {
+																				"type": "array",
+																				"items": {
+																					"type": "object",
+																					"properties": {
+																						"allOf": {
+																							"type": "array",
+																							"items": {
+																								"type": "object",
+																								"properties": {
+																									"allOf": {
+																										"type": "array",
+																										"items": {
+																											"type": "object",
+																											"properties": {
+																												"not": {
+																													"type": "object",
+																													"properties": {
+																														"field": {
+																															"type": "string"
+																														},
+																														"notEquals": {
+																															"type": "string"
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
