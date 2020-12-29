@@ -6,7 +6,12 @@
 				"name": "Execute Pipeline1",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "bkbk",
+						"value": "2151"
+					}
+				],
 				"typeProperties": {
 					"pipeline": {
 						"referenceName": "pipeline2",
