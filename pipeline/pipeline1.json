@@ -14,7 +14,7 @@
 				],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "pipeline2",
+						"referenceName": "pipeline3",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": false
